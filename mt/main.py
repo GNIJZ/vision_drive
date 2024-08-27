@@ -21,7 +21,10 @@ test_data_file="dataset/test.csv"
 # data = pd.read_csv(tranin_data_file)
 data_transform = transforms.Compose([
     # transforms.Resize((224, 224)),  # 调整图像大小为 224x224
-    transforms.ToTensor(),           # 转换为张量
+    #转为灰度图
+    # transforms.ToPILImage(),  # 将输入转换为 PIL 图像
+    # transforms.Grayscale(num_output_channels=1),  # 转换为灰度图像，num_
+    transforms.ToTensor()          # 转换为张量
 ])
 
 # print(data)
@@ -56,6 +59,7 @@ for epoch in range(num_epochs):
     for i, (images, labels) in enumerate(data_loader):
         resnet50.train()
         images = images.to(device)
+        print("11111111111111",images.shape)
         labels = labels.to(device)
         optimizer.zero_grad()
 

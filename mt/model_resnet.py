@@ -5,13 +5,13 @@ class BasicBlock(nn.Module):
     def __init__(self,in_channels,out_channels,stride):
         super(BasicBlock, self).__init__()
         self.block=nn.Sequential(
-            nn.Conv2d(in_channels,int(out_channels/4),kernel_size=1,stride=stride,padding=0,bias=False),
-            nn.BatchNorm2d(int(out_channels/4)),
+            nn.Conv2d(in_channels,out_channels//4,kernel_size=1,stride=stride,padding=0,bias=False),
+            nn.BatchNorm2d(out_channels//4),
             nn.ReLU(inplace=True),
-            nn.Conv2d(int(out_channels/4),int(out_channels/4),kernel_size=3,stride=1,padding=1,bias=False),
-            nn.BatchNorm2d(int(out_channels / 4)),
+            nn.Conv2d(out_channels//4,out_channels//4,kernel_size=3,stride=1,padding=1,bias=False),
+            nn.BatchNorm2d(out_channels //4),
             nn.ReLU(inplace=True),
-            nn.Conv2d(int(out_channels / 4), out_channels, kernel_size=1, stride=1, padding=0, bias=False),
+            nn.Conv2d(out_channels //4, out_channels, kernel_size=1, stride=1, padding=0, bias=False),
             nn.BatchNorm2d(out_channels)
         )
         self.shortcut = nn.Sequential()
@@ -33,12 +33,12 @@ class ResNet50(nn.Module):
         super(ResNet50,self).__init__()
         self.inchannels=128
         self.conv1=nn.Sequential(
-            nn.Conv2d(3,128,kernel_size=3, stride=2, padding=3, bias=False),
+            nn.Conv2d(in_channels=3,out_channels=128,kernel_size=3, stride=2, padding=3, bias=False),
             nn.BatchNorm2d(128),
             nn.ReLU(inplace=True),
             nn.MaxPool2d(kernel_size=3, stride=2, padding=1)
         )
-        self.layer1=self.make_layer(resblock,channels=128,num_blocks=3,stride=1)
+        self.layer1=self.make_layer(resblock,channels=128,num_blocks=2,stride=1)
         self.layer2=self.make_layer(resblock,channels=256,num_blocks=3,stride=2)
         self.layer3 = self.make_layer(resblock, channels=512,num_blocks=2,stride=2)
         self.layer4 = self.make_layer(resblock, channels=1024,num_blocks=1, stride=2)
@@ -64,7 +64,7 @@ class ResNet50(nn.Module):
         out=self.layer4(out)
 
         out=F.avg_pool2d(out,4)   #[512,1,1]
-        out = out.view(out.size(0), -1)
+        out = out.view(-1,out.size(1)) #转onxx
         out=self.fc(out)
         return out
 
