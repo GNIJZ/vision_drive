@@ -7,7 +7,6 @@ class FaceDetection:
     def __init__(self, min_detection_confidence=0.5):
         self.face_detector = mp.solutions.face_detection.FaceDetection(model_selection=0,
                                                                        min_detection_confidence=min_detection_confidence)
-
     def detector_result(self, image):
         results = self.face_detector.process(image)
         if results.detections is None or len(results.detections) != 1:
